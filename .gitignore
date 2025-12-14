@@ -39,4 +39,4 @@ lerna-debug.log*
 .vercel
 
 # TypeScript
-*.tsbuildinfo
+*.tsbuildinfobfg.jar
