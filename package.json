@@ -39,6 +39,6 @@
     "vite": "^5.0.8",
     "concurrently": "^8.2.0",
     "vitest": "^1.4.1",
-    "@types/form-data": "^4.0.0"
+    "@types/form-data": "^2.5.0"
   }
 }
