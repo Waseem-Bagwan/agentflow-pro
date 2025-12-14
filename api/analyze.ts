@@ -162,7 +162,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           console.info('[analyze] Kestra execution success')
         } catch (kestraErr: any) {
           console.error('[analyze] Kestra execution failed:', kestraErr?.message || kestraErr)
-          const allowFallback = process.env.KESTRA_FALLBACK_ON_ERROR !== 'false'
           // If the error is a 404 / flow not found, fallback to demo automatically
           if (kestraErr?.kestraNotFound) {
             console.warn('[analyze] Kestra flow not found; falling back to demo')
