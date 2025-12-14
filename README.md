@@ -37,7 +37,7 @@ Open `http://localhost:5173` and click **Try Demo PR** to see deterministic resu
 
 - `DEMO_MODE` — set to `true` to force demo outputs without credentials.
 - `GITHUB_TOKEN` — GitHub PAT for live PR fetches.
-- `KESTRA_API_URL`, `KESTRA_TENANT_ID`, `KESTRA_API_KEY` — optional; when set, the API triggers the Kestra flow before falling back to the deterministic mock. `KESTRA_API_URL` should point to your Kestra instance (e.g., http://localhost:8080). The API will attempt both the modern `/api/v1/namespaces/{namespace}/flows/{flowId}/executions` endpoint and the legacy `/main/executions/{namespace}/{flowId}` endpoint.
+- `KESTRA_API_URL`, `KESTRA_TENANT_ID`, `KESTRA_API_KEY` — optional; when set, the API triggers the Kestra flow before falling back to the deterministic mock. `KESTRA_API_URL` should point to your Kestra instance (e.g., `http://localhost:8080`). The API will attempt both the modern `/api/v1/namespaces/{namespace}/flows/{flowId}/executions` endpoint and the legacy `/main/executions/{namespace}/{flowId}` endpoint.
 
 ## How analysis works
 
