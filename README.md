@@ -2,25 +2,6 @@
 
 AI-powered PR review assistant with deterministic demo mode and optional Kestra orchestration.
 
-## 🤖 CodeRabbit Integration
-
-This project uses **CodeRabbit** for automated code reviews and quality assurance.
-
-### Features
-- ✅ Automated PR reviews
-- ✅ Code quality suggestions
-- ✅ Security vulnerability detection
-- ✅ Documentation improvements
-- ✅ Best practices enforcement
-
-### How It Works
-CodeRabbit automatically reviews every pull request, providing:
-- Line-by-line code analysis
-- Suggestions for improvements
-- Security and performance insights
-- Documentation quality checks
-- Automatic reviews are posted as comments directly on GitHub pull requests.
-
 ## Quick start
 
 ```bash
@@ -61,6 +42,36 @@ CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm test`, and `npm run build`.
 
 - **Demo**: Click **Try Demo PR** in the UI or send `{ demoMode: true }`. The app shows a “Demo mode — deterministic sample results” badge.
 - **Live**: Provide `GITHUB_TOKEN` and a PR URL. If Kestra is configured, its output is mapped to the AnalysisResult shape; otherwise the local mock summarizer is used.
+
+## 🤖 CodeRabbit Integration
+
+This project uses **CodeRabbit** for automated code reviews and quality assurance.
+
+### Features
+- ✅ Automated PR reviews
+- ✅ Code quality suggestions
+- ✅ Security vulnerability detection
+- ✅ Documentation improvements
+- ✅ Best practices enforcement
+
+### How It Works
+CodeRabbit automatically reviews every pull request, providing:
+- Line-by-line code analysis
+- Suggestions for improvements
+- Security and performance insights
+- Documentation quality checks
+- Automatic reviews are posted as comments directly on GitHub pull requests.
+
+## 🤖 CodeRabbit Code Quality Workflow
+
+This project actively uses **CodeRabbit** as part of its pull request review process.
+
+- Every PR is automatically reviewed by CodeRabbit
+- Inline suggestions are addressed and applied
+- Reviews are treated as a required quality gate
+
+📸 **Evidence:**  
+See `docs/screenshots/` for real CodeRabbit PR reviews, suggestions, and follow-up fixes.
 
 ## Kestra setup (optional)
 
