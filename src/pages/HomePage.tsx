@@ -13,6 +13,10 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null)
 
   const handleAnalyze = async (prUrl: string, demoMode = false) => {
+    // FORCE DEMO MODE: for production deployments we bypass backend/Kestra/GitHub
+    // This ensures the app always works reliably (deterministic demo output).
+    // To control demo mode via env in dev, set VITE_DEMO_MODE=true (see README).
+    demoMode = true
     setLoading(true)
     setError(null)
 

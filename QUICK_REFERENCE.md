@@ -63,6 +63,8 @@ KESTRA_API_KEY=your_key
 OPENAI_API_KEY=sk-xxxxx
 ```
 
+**Production recommendation:** Set `VITE_DEMO_MODE=true` in your Vercel environment variables to force demo-only behavior (no Kestra/GitHub calls) so the deployed app remains reliable.
+
 ---
 
 ## 🐳 Kestra Setup

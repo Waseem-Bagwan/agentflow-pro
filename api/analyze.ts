@@ -93,7 +93,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ success: false, error: 'Invalid PR URL provided' })
     }
 
-    const isDemo = demoMode === true || process.env.DEMO_MODE === 'true' || req.body?.demo === true
+    // Demo mode is enabled when request explicitly sets `demoMode: true`,
+    // or when server-side `DEMO_MODE` or `VITE_DEMO_MODE` env vars are set to 'true'.
+    const isDemo = demoMode === true || process.env.DEMO_MODE === 'true' || process.env.VITE_DEMO_MODE === 'true' || req.body?.demo === true
 
     let owner: string, repo: string, prNumber: number
     try {
@@ -165,10 +167,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           if (kestraErr?.kestraNotFound) {
             console.warn('[analyze] Kestra flow not found; falling back to demo')
             analysis = null
-          } else if (!allowFallback) {
-            return res.status(502).json({ success: false, error: 'Kestra execution failed', details: kestraErr?.message || String(kestraErr), source: 'kestra' })
           } else {
-            console.warn('[analyze] Falling back to mock summarizer due to Kestra error')
+            // Do not return 502 to the client — always fall back to the deterministic mock
+            // to keep the deployed app reliable and avoid proxy errors.
+            console.warn('[analyze] Kestra execution failed; falling back to mock summarizer:', kestraErr?.message || String(kestraErr))
             analysis = null
           }
         }

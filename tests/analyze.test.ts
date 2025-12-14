@@ -24,6 +24,7 @@ function makeRes() {
 describe('api/analyze handler', () => {
   beforeEach(() => {
     process.env.DEMO_MODE = 'false'
+    process.env.VITE_DEMO_MODE = 'false'
     process.env.GITHUB_TOKEN = 'fake-token'
     process.env.KESTRA_API_URL = 'https://kestra.local'
     process.env.KESTRA_API_KEY = 'key'
@@ -34,6 +35,7 @@ describe('api/analyze handler', () => {
   afterEach(() => {
     vi.restoreAllMocks()
     delete process.env.DEMO_MODE
+    delete process.env.VITE_DEMO_MODE
     delete process.env.GITHUB_TOKEN
     delete process.env.KESTRA_API_URL
     delete process.env.KESTRA_API_KEY

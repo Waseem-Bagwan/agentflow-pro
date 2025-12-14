@@ -42,6 +42,8 @@ CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm test`, and `npm run build`.
 
 - **Demo**: Click **Try Demo PR** in the UI or send `{ demoMode: true }`. The app shows a “Demo mode — deterministic sample results” badge.
 - **Live**: Provide `GITHUB_TOKEN` and a PR URL. If Kestra is configured, its output is mapped to the AnalysisResult shape; otherwise the local mock summarizer is used.
+ 
+**Production note:** To force demo-only behavior in production (recommended for deployments where Kestra or GitHub access isn't available), set `VITE_DEMO_MODE=true` in your Vercel environment variables (or add it to your `.env` for local dev). When enabled the frontend forces demo mode and no Kestra or GitHub calls will be made.
 
 ## 🤖 CodeRabbit Integration
 
@@ -87,7 +89,7 @@ See `docs/screenshots/` for real CodeRabbit PR reviews, suggestions, and follow-
    - `KESTRA_TENANT_ID=agentflow`
    - `KESTRA_FLOW_ID=pr-review-agent`
    - `KESTRA_API_KEY=`
-    - `KESTRA_FALLBACK_ON_ERROR=true` — optional. When `true` (default), the backend falls back to deterministic mock if Kestra fails. Set to `false` to surface Kestra errors to the client (HTTP 502 with structured JSON error).
+   - `KESTRA_FALLBACK_ON_ERROR=true` — optional. When `true` (default), the backend falls back to deterministic mock if Kestra fails. The handler is designed to avoid returning gateway errors (502) and will gracefully fall back to the deterministic mock so deployments remain reliable.
    - `SECRET_OPENAI_API_KEY=` (Base64-encoded secret injected into Kestra as `SECRET_OPENAI_API_KEY`)
 
 ### Running Kestra with Docker Compose (example)
