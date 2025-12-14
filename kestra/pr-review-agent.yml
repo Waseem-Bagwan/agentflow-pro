@@ -1,0 +1,148 @@
+id: pr-review-agent
+namespace: agentflow
+
+description: |
+  AgentFlow Pro – AI-powered GitHub Pull Request Review
+  Generates summary, risks, checklist, and merge recommendation.
+
+inputs:
+  - id: prNumber
+    type: INT
+
+  - id: repository
+    type: STRING
+
+  - id: prTitle
+    type: STRING
+
+  - id: prBody
+    type: STRING
+
+  - id: prDiff
+    type: STRING
+
+  - id: author
+    type: STRING
+
+  - id: filesChanged
+    type: INT
+
+  - id: additions
+    type: INT
+
+  - id: deletions
+    type: INT
+
+tasks:
+  # ---------------------------------------------------
+  # 1️⃣ Prepare prompt for LLM
+  # ---------------------------------------------------
+  - id: build_prompt
+    type: io.kestra.plugin.scripts.python.Script
+    script: |
+      import json
+
+      prompt = f"""
+      You are a senior software engineer reviewing a GitHub Pull Request.
+
+      Repository: {{"{{ inputs.repository }}" }}
+      PR #{ {"{{ inputs.prNumber }}" } }: {"{{ inputs.prTitle }}"}
+      Author: {"{{ inputs.author }}"}
+
+      Description:
+      {"{{ inputs.prBody }}"}
+
+      Stats:
+      - Files changed: {"{{ inputs.filesChanged }}"}
+      - Additions: +{"{{ inputs.additions }}"}
+      - Deletions: -{"{{ inputs.deletions }}"}
+
+      Diff:
+      {"{{ inputs.prDiff }}"}
+
+      Respond ONLY with valid JSON in this format:
+      {{
+        "summary": "2–4 sentence summary",
+        "risks": ["risk 1", "risk 2"],
+        "checklist": ["item 1", "item 2"],
+        "shouldMerge": true,
+        "explanation": "short explanation"
+      }}
+      """
+
+      print(json.dumps({"prompt": prompt}))
+    outputFiles:
+      - prompt.json
+
+  # ---------------------------------------------------
+  # 2️⃣ AI PR Analysis
+  # ---------------------------------------------------
+  - id: ai_review
+    type: io.kestra.plugin.openai.ChatCompletion
+    apiKey: "{{ secret('OPENAI_API_KEY') }}"
+    model: gpt-4o-mini
+    messages:
+      - role: system
+        content: "You are an expert code reviewer."
+      - role: user
+        content: "{{ json(read('prompt.json')).prompt }}"
+
+  # ---------------------------------------------------
+  # 3️⃣ Parse & normalize AI response
+  # ---------------------------------------------------
+  - id: parse_response
+    type: io.kestra.plugin.scripts.python.Script
+    script: |
+      import json
+      import re
+
+      raw = """{{ outputs.ai_review.choices[0].message.content }}"""
+
+      match = re.search(r'\{.*\}', raw, re.S)
+      data = json.loads(match.group(0)) if match else {}
+
+      result = {
+        "summary": data.get("summary", ""),
+        "risks": data.get("risks", []),
+        "checklist": data.get("checklist", []),
+        "shouldMerge": data.get("shouldMerge", False),
+        "explanation": data.get("explanation", ""),
+        "lintSummary": "LLM-based review",
+        "source": "kestra"
+      }
+
+      print(json.dumps(result))
+    outputFiles:
+      - result.json
+
+# ---------------------------------------------------
+# ✅ WORKFLOW-LEVEL OUTPUTS (THIS IS IMPORTANT)
+# ---------------------------------------------------
+outputs:
+  - id: summary
+    type: STRING
+    value: "{{ json(read('result.json')).summary }}"
+
+  - id: risks
+    type: ARRAY
+    value: "{{ json(read('result.json')).risks }}"
+
+  - id: checklist
+    type: ARRAY
+    value: "{{ json(read('result.json')).checklist }}"
+
+  - id: shouldMerge
+    type: BOOLEAN
+    value: "{{ json(read('result.json')).shouldMerge }}"
+
+  - id: explanation
+    type: STRING
+    value: "{{ json(read('result.json')).explanation }}"
+
+  - id: lintSummary
+    type: STRING
+    value: "{{ json(read('result.json')).lintSummary }}"
+
+  - id: source
+    type: STRING
+    value: "{{ json(read('result.json')).source }}"
